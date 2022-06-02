@@ -1,6 +1,8 @@
-import logo from "./logo.svg";
-import "./App.css";
 import { Component } from "react";
+
+import SearchBox from "./components/search-box/search-box.component";
+import ProfileList from "./components/profile-list/profile-list.component";
+import "./App.css";
 
 // CLASS COMPONENT
 class App extends Component {
@@ -10,41 +12,62 @@ class App extends Component {
 
 		this.state = {
 			monsters: [],
+			searchField: "",
 		};
-    console.log('constructor1'); // the order in which these class methods are ran
+		console.log("constructor1"); // the order in which class methods are ran
 	}
 
-  // lifecycle method with promises 
-  componentDidMount() {
-    console.log('componentDidMount3');
-    fetch('https://jsonplaceholder.typicode.com/users')
-    .then(response => response.json())
-    .then((users) => 
-      this.setState(
-        () => {
-          return { monsters: users };
-        },
-        () => {
-          console.log(this.state);
-        }
-      )
-    );
-  }
+	// lifecycle method with promises
+	componentDidMount() {
+		console.log("componentDidMount3");
+		fetch("https://jsonplaceholder.typicode.com/users")
+			.then((response) => response.json())
+			.then((users) =>
+				this.setState(
+					() => {
+						return { monsters: users };
+					},
+					() => {
+						console.log(this.state);
+					}
+				)
+			);
+	}
+
+	// anonymous function
+	handleChange = (event) => {
+		console.log(event.target.value);
+		const searchField = event.target.value.toLocaleLowerCase();
+		this.setState(
+			() => {
+				return { searchField };
+			},
+			() => {
+				console.log(this.state);
+			}
+		);
+	};
 
 	render() {
-    console.log('render2');
+		console.log("render2");
+
+		// destructuring and pulling props off this, this.state and casting them to variables in order to shorten our variable name by initializing a constant
+		const { monsters, searchField } = this.state;
+		const { handleChange } = this;
+
+		const filteredMonsters = monsters.filter((monster) => {
+			return monster.name.toLocaleLowerCase().includes(searchField);
+		});
+
 		return (
 			<div className="App">
-        <input className='search-box' type='search' placeholder='search monsters' />
-				{
-					this.state.monsters.map((monster) => {
-						return (
-							<div key={monster.id}>
-								<h1>{monster.name}</h1>
-							</div>
-						);
-					}) // monster is the actual element of the array that the callback function of the map method receives as its first argument
-				}
+				<h1 className='app-title'>Monsters Rolodex</h1>
+				<SearchBox
+					className="monsters-search-box"
+					changeHandler={handleChange}
+					placeholder="search monsters"
+				/>
+				<ProfileList monsters={filteredMonsters} />
 			</div>
 		);
 	}
