@@ -10,7 +10,7 @@ class ProfileList extends Component {
 			<div className="profile-list">
 				{monsters.map((monster) => {
 					return (
-						<Profile monster={monster} /> // monster={monster} - setting up a prop 
+						<Profile monster={monster} key={monster.id}/> // monster={monster} - setting up a prop 
 					);
 				})}
 			</div>
